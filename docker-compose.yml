@@ -1,0 +1,40 @@
+name: matchday
+
+# MatchDay — event-driven microservices demo.
+# Phase 1 starts with MatchService + its own PostgreSQL (database-per-service).
+# RabbitMQ and the remaining services are added in later phases.
+
+services:
+  matchservice:
+    image: matchday/matchservice:latest
+    build:
+      context: .
+      dockerfile: src/MatchService/Dockerfile
+    ports:
+      - "5172:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__MatchDb: "Host=matchservice-db;Port=5432;Database=matchdb;Username=matchday;Password=matchday"
+    depends_on:
+      matchservice-db:
+        condition: service_healthy
+
+  matchservice-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: matchdb
+      POSTGRES_USER: matchday
+      POSTGRES_PASSWORD: matchday
+    ports:
+      - "5433:5432"
+    volumes:
+      - matchservice-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U matchday -d matchdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  matchservice-db-data:

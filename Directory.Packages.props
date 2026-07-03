@@ -1,0 +1,22 @@
+<Project>
+
+  <!-- Central Package Management: one version per package across all services.
+       Projects reference packages without a Version attribute. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Let a PackageVersion entry override a transitive dependency's version. -->
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Transitive pin: AspNetCore.OpenApi 10.0.9 pulls Microsoft.OpenApi 2.0.0,
+         which has a known high-severity advisory (GHSA-v5pm-xwqc-g5wc). -->
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.9.0" />
+  </ItemGroup>
+
+</Project>
