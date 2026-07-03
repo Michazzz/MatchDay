@@ -3,6 +3,12 @@
 # available during restore under Central Package Management.
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+# Npgsql probes for the Kerberos/GSSAPI library during authentication. The minimal
+# .NET runtime image doesn't ship it, which logs a noisy (harmless) error on startup.
+# Install it as root before dropping to the non-root app user so the image is complete.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
