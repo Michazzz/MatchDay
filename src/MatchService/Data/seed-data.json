@@ -1,0 +1,70 @@
+{
+  "teams": [
+    { "name": "Pogoń Szczecin", "shortCode": "POG", "city": "Szczecin" },
+    { "name": "Lech Poznań", "shortCode": "LEC", "city": "Poznań" },
+    { "name": "Legia Warszawa", "shortCode": "LEG", "city": "Warszawa" },
+    { "name": "Raków Częstochowa", "shortCode": "RAK", "city": "Częstochowa" },
+    { "name": "Górnik Zabrze", "shortCode": "GOR", "city": "Zabrze" },
+    { "name": "Wisła Kraków", "shortCode": "WIS", "city": "Kraków" }
+  ],
+  "stadiums": [
+    { "name": "Stadion Florian Krygier", "city": "Szczecin", "capacity": 21163 },
+    { "name": "Enea Stadion", "city": "Poznań", "capacity": 42837 },
+    { "name": "Stadion Wojska Polskiego", "city": "Warszawa", "capacity": 31103 },
+    { "name": "Arena Zabrze", "city": "Zabrze", "capacity": 24563 }
+  ],
+  "matches": [
+    {
+      "homeTeam": "POG",
+      "awayTeam": "LEC",
+      "stadium": "Stadion Florian Krygier",
+      "kickoffUtc": "2026-07-18T17:30:00+00:00",
+      "sectors": [
+        { "name": "Trybuna Północna", "capacity": 6000, "price": 60 },
+        { "name": "Trybuna Południowa", "capacity": 6000, "price": 60 },
+        { "name": "Trybuna Główna", "capacity": 3000, "price": 120 },
+        { "name": "Loża VIP", "capacity": 300, "price": 350 },
+        { "name": "Sektor Gości", "capacity": 1500, "price": 50 }
+      ]
+    },
+    {
+      "homeTeam": "LEG",
+      "awayTeam": "RAK",
+      "stadium": "Stadion Wojska Polskiego",
+      "kickoffUtc": "2026-07-19T20:00:00+00:00",
+      "sectors": [
+        { "name": "Trybuna Północna", "capacity": 7000, "price": 70 },
+        { "name": "Trybuna Południowa", "capacity": 7000, "price": 70 },
+        { "name": "Trybuna Główna", "capacity": 4000, "price": 140 },
+        { "name": "Loża VIP", "capacity": 400, "price": 400 },
+        { "name": "Sektor Gości", "capacity": 1800, "price": 60 }
+      ]
+    },
+    {
+      "homeTeam": "GOR",
+      "awayTeam": "WIS",
+      "stadium": "Arena Zabrze",
+      "kickoffUtc": "2026-07-20T15:00:00+00:00",
+      "sectors": [
+        { "name": "Trybuna Północna", "capacity": 6500, "price": 55 },
+        { "name": "Trybuna Południowa", "capacity": 6500, "price": 55 },
+        { "name": "Trybuna Główna", "capacity": 3500, "price": 110 },
+        { "name": "Loża VIP", "capacity": 350, "price": 320 },
+        { "name": "Sektor Gości", "capacity": 1600, "price": 50 }
+      ]
+    },
+    {
+      "homeTeam": "POG",
+      "awayTeam": "LEG",
+      "stadium": "Stadion Florian Krygier",
+      "kickoffUtc": "2026-08-01T19:00:00+00:00",
+      "sectors": [
+        { "name": "Trybuna Północna", "capacity": 6000, "price": 80 },
+        { "name": "Trybuna Południowa", "capacity": 6000, "price": 80 },
+        { "name": "Trybuna Główna", "capacity": 3000, "price": 160 },
+        { "name": "Loża VIP", "capacity": 300, "price": 450 },
+        { "name": "Sektor Gości", "capacity": 1500, "price": 70 }
+      ]
+    }
+  ]
+}
