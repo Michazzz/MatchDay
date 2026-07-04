@@ -4,6 +4,7 @@ using MatchService.Consumers;
 using MatchService.Data;
 using MatchService.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options => options.WithTitle("MatchService API"));
 }
 
 // Apply migrations and seed the catalog on startup (demo convenience).

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ReservationService.Consumers;
 using ReservationService.Data;
 using ReservationService.Endpoints;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options => options.WithTitle("ReservationService API"));
 }
 
 using (var scope = app.Services.CreateScope())
