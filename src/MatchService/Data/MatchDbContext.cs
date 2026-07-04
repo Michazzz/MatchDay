@@ -49,6 +49,7 @@ public class MatchDbContext(DbContextOptions<MatchDbContext> options) : DbContex
         modelBuilder.Entity<SeatHold>(e =>
         {
             e.HasKey(h => h.ReservationId);
+            e.Property(s => s.TotalPrice).HasPrecision(10, 2);
         });
     }
 }

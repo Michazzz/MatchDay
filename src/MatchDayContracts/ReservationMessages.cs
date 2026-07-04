@@ -27,6 +27,7 @@ public record SeatsReserved
     public Guid MatchId { get; init; }
     public Guid SectorId { get; init; }
     public int Quantity { get; init; }
+    public decimal TotalPrice { get; init; }
 }
 
 /// <summary>Event: MatchService could not hold the seats (sold out, unknown match/sector, …).</summary>
