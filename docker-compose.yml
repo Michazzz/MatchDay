@@ -41,6 +41,42 @@ services:
       timeout: 5s
       retries: 5
 
+  paymentservice:
+    image: matchday/paymentservice:latest
+    build:
+      context: .
+      dockerfile: src/PaymentService/Dockerfile
+    ports:
+      - "5175:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__PaymentDb: "Host=paymentservice-db;Port=5432;Database=paymentdb;Username=matchday;Password=matchday"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: guest
+      RabbitMq__Password: guest
+    depends_on:
+      paymentservice-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  paymentservice-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: paymentdb
+      POSTGRES_USER: matchday
+      POSTGRES_PASSWORD: matchday
+    ports:
+      - "5435:5432"
+    volumes:
+      - paymentservice-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U matchday -d paymentdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   reservationservice:
     image: matchday/reservationservice:latest
     build:
@@ -112,5 +148,6 @@ services:
 
 volumes:
   matchservice-db-data:
+  paymentservice-db-data:
   reservationservice-db-data:
   rabbitmq-data:
