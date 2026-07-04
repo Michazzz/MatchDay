@@ -9,6 +9,7 @@ public class MatchDbContext(DbContextOptions<MatchDbContext> options) : DbContex
     public DbSet<Stadium> Stadiums => Set<Stadium>();
     public DbSet<Match> Matches => Set<Match>();
     public DbSet<Sector> Sectors => Set<Sector>();
+    public DbSet<SeatHold> SeatHolds => Set<SeatHold>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,11 @@ public class MatchDbContext(DbContextOptions<MatchDbContext> options) : DbContex
         {
             e.Property(s => s.Name).HasMaxLength(100);
             e.Property(s => s.Price).HasPrecision(10, 2);
+        });
+
+        modelBuilder.Entity<SeatHold>(e =>
+        {
+            e.HasKey(h => h.ReservationId);
         });
     }
 }
