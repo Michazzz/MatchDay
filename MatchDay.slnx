@@ -6,5 +6,8 @@
     <File Path="global.json" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="src/MatchDayContracts/MatchDayContracts.csproj" />
   <Project Path="src/MatchService/MatchService.csproj" />
+  <Project Path="src/NotificationService/NotificationService.csproj" />
+  <Project Path="src/ReservationService/ReservationService.csproj" />
 </Solution>

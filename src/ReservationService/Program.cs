@@ -1,27 +1,26 @@
 using System.Text.Json.Serialization;
 using MassTransit;
-using MatchService.Consumers;
-using MatchService.Data;
-using MatchService.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using ReservationService.Consumers;
+using ReservationService.Data;
+using ReservationService.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<MatchDbContext>(options =>
+builder.Services.AddDbContext<ReservationDbContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("MatchDb")
-        ?? throw new InvalidOperationException("Connection string 'MatchDb' is not configured.")));
+        builder.Configuration.GetConnectionString("ReservationDb")
+        ?? throw new InvalidOperationException("Connection string 'ReservationDb' is not configured.")));
 
-// Serialize enums (e.g. MatchStatus) as their names rather than integers.
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<ReserveSeatsConsumer>();
+    x.AddConsumer<SeatsReservedConsumer>();
+    x.AddConsumer<SeatsReservationRejectedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -39,24 +38,20 @@ builder.Services.AddMassTransit(x =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-// Apply migrations and seed the catalog on startup (demo convenience).
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<MatchDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<ReservationDbContext>();
     await db.Database.MigrateAsync();
-    await MatchSeeder.SeedAsync(db);
 }
 
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "MatchService" }))
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "ReservationService" }))
    .WithName("HealthCheck");
 
-app.MapMatchEndpoints();
-app.MapReferenceEndpoints();
+app.MapReservationEndpoints();
 
 app.Run();

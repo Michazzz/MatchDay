@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Shared message contracts. Deliberately dependency-free (plain records) so
+       every service can reference it without pulling in MassTransit or a transport. -->
+
+</Project>

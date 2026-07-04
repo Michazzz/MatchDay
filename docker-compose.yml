@@ -1,8 +1,8 @@
 name: matchday
 
 # MatchDay — event-driven microservices demo.
-# Phase 1 starts with MatchService + its own PostgreSQL (database-per-service).
-# RabbitMQ and the remaining services are added in later phases.
+# Phase 1: MatchService + ReservationService + RabbitMQ (message bus).
+# Each service owns its own PostgreSQL (database-per-service).
 
 services:
   matchservice:
@@ -16,8 +16,13 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: "8080"
       ConnectionStrings__MatchDb: "Host=matchservice-db;Port=5432;Database=matchdb;Username=matchday;Password=matchday"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: guest
+      RabbitMq__Password: guest
     depends_on:
       matchservice-db:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   matchservice-db:
@@ -36,5 +41,76 @@ services:
       timeout: 5s
       retries: 5
 
+  reservationservice:
+    image: matchday/reservationservice:latest
+    build:
+      context: .
+      dockerfile: src/ReservationService/Dockerfile
+    ports:
+      - "5173:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__ReservationDb: "Host=reservationservice-db;Port=5432;Database=reservationdb;Username=matchday;Password=matchday"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: guest
+      RabbitMq__Password: guest
+    depends_on:
+      reservationservice-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  reservationservice-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: reservationdb
+      POSTGRES_USER: matchday
+      POSTGRES_PASSWORD: matchday
+    ports:
+      - "5434:5432"
+    volumes:
+      - reservationservice-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U matchday -d reservationdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  notificationservice:
+    image: matchday/notificationservice:latest
+    build:
+      context: .
+      dockerfile: src/NotificationService/Dockerfile
+    ports:
+      - "5174:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: guest
+      RabbitMq__Password: guest
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # management UI (guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
 volumes:
   matchservice-db-data:
+  reservationservice-db-data:
+  rabbitmq-data:
