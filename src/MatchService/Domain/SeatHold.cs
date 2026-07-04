@@ -10,4 +10,5 @@ public class SeatHold
     public Guid SectorId { get; set; }
     public int Quantity { get; set; }
     public DateTimeOffset HeldAt { get; set; }
+    public decimal TotalPrice { get; set; }
 }

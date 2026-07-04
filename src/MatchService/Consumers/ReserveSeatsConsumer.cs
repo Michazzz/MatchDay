@@ -23,10 +23,11 @@ public class ReserveSeatsConsumer(MatchDbContext db) : IConsumer<ReserveSeats>
         await using var tx = await db.Database.BeginTransactionAsync(ct);
 
         // Idempotency: already processed (e.g. a redelivery) → re-affirm success and stop.
-        if (await db.SeatHolds.AnyAsync(h => h.ReservationId == msg.ReservationId, ct))
+        var existingHold = await db.SeatHolds.FirstOrDefaultAsync(s => s.ReservationId == msg.ReservationId, ct);
+        if (existingHold is not null)
         {
             await tx.CommitAsync(ct);
-            await PublishReserved(context, msg);
+            await PublishReserved(context, msg, existingHold.TotalPrice);
             return;
         }
 
@@ -57,26 +58,31 @@ public class ReserveSeatsConsumer(MatchDbContext db) : IConsumer<ReserveSeats>
         }
 
         sector.AvailableSeats -= msg.Quantity;
+        var totalPrice = sector.Price * msg.Quantity;
+
         db.SeatHolds.Add(new SeatHold
         {
             ReservationId = msg.ReservationId,
             SectorId = msg.SectorId,
             Quantity = msg.Quantity,
-            HeldAt = DateTimeOffset.UtcNow
+            HeldAt = DateTimeOffset.UtcNow,
+            TotalPrice = totalPrice
         });
+
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
 
-        await PublishReserved(context, msg);
+        await PublishReserved(context, msg, totalPrice);
     }
 
-    private static Task PublishReserved(ConsumeContext context, ReserveSeats msg) =>
+    private static Task PublishReserved(ConsumeContext context, ReserveSeats msg, decimal totalPrice) =>
         context.Publish(new SeatsReserved
         {
             ReservationId = msg.ReservationId,
             MatchId = msg.MatchId,
             SectorId = msg.SectorId,
-            Quantity = msg.Quantity
+            Quantity = msg.Quantity,
+            TotalPrice = totalPrice,
         });
 
     private static Task PublishRejected(ConsumeContext context, ReserveSeats msg, string reason) =>

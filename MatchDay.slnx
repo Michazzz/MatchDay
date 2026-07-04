@@ -9,5 +9,6 @@
   <Project Path="src/MatchDayContracts/MatchDayContracts.csproj" />
   <Project Path="src/MatchService/MatchService.csproj" />
   <Project Path="src/NotificationService/NotificationService.csproj" />
+  <Project Path="src/PaymentService/PaymentService.csproj" />
   <Project Path="src/ReservationService/ReservationService.csproj" />
 </Solution>
